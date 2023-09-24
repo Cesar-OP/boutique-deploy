@@ -1,0 +1,36 @@
+local
+python manage.py runserver --settings=myshop.settings.local
+
+set settings
+set DJANGO_SETTINGS_MODULE=myshop.settings.local
+
+
+ativar docker
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
+
+ativar celery
+celery -A myshop worker -l info
+
+#ativar redis
+docker run -it --rm --name redis -p 6379:6379 redis
+
+# Stripe settings
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51NUXMKJ5a3XA74Ln2PoJ7NdwTSdp3AnIKenw8DZPCvuUxqyorzYubHfVBRKBvKKBnLfuGke3ZmHYqU7Bjw54zFD100vFKf9bKP' # Publishable key
+STRIPE_SECRET_KEY = 'sk_test_51NUXMKJ5a3XA74LnZX4idV9MBMBh9lUoJQckzzg28rauk9kSZNEe6zDs6ilRKH5sVnUfUivUBcOouLOibd9QLvsh00zQY9mVrD'      # Secret key
+STRIPE_API_VERSION = '2022-08-01'
+STRIPE_WEBHOOK_SECRET = 'whsec_7f4be3cc9363c4362d53ad9f7d9f4ef94f6ca71f082bc83c130d32a1ae179e17'
+
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_ALWAYS_EAGER = True
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'adm.anasantosjesus@gmail.com'
+EMAIL_HOST_PASSWORD = 'nauaifwitfuvtxix'  # Replace with your actual Gmail password
