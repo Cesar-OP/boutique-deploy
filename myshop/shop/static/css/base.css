@@ -3,7 +3,7 @@
 body {
     margin:0;
     padding: 3%;
-    padding-bottom:0 ;
+    padding-top:1% ;
     overflow: visible;
     font-family:helvetica, sans-serif;
 }
@@ -263,7 +263,7 @@ ul.errorlist {
     display: grid;
     /* grid-template-columns: repeat(5, 1fr); Adjust as needed */
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 2.777%;
+    gap: 1.5%;
   }
   
 
