@@ -5,7 +5,7 @@ from .base import *
 DEBUG = False
 
 ADMINS = [
-    ('cesar', 'adm.anasantosjesus.com'),
+    ('anasantos', 'adm.anasantosjesus@gmail.com'),
 ]
 
 ALLOWED_HOSTS = ['boutiquedaana.com', 'www.boutiquedaana.com.br']

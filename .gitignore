@@ -1,2 +1,2 @@
 .env
-uwsgi_app.sock
+myshop/uwsgi_app.sock
