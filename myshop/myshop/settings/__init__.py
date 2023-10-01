@@ -1,5 +1,5 @@
 from .base import *
-# from .prod import *
+from .prod import *
 
 try:
     from .local import *
