@@ -1,0 +1,1 @@
+web: gunicorn myshop.wsgi --settings=settings.myshop.settings.prod --log-file -

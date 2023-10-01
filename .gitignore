@@ -1,4 +1,3 @@
 .env
-myshop/uwsgi_app.sock
 /venv/
 myshop/myshop/settings/local.py
