@@ -5,7 +5,7 @@ import django_heroku
 import dj_database_url
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 ALLOWED_HOSTS = []
 SECRET_KEY=(config, 'SECRET_KEY')
 
