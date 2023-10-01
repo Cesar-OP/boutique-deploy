@@ -1,4 +1,5 @@
 from pathlib import Path
+import secrets
 import os
 from decouple import config, Csv
 import django_heroku
@@ -6,9 +7,22 @@ import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+print("BASE_DIR:", BASE_DIR)
+
 ALLOWED_HOSTS = []
 SECRET_KEY=(config, 'SECRET_KEY')
 
+IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
+
+# SECURITY WARNING: don't run with debug turned on in production!
+if not IS_HEROKU_APP:
+    DEBUG = True
+
+
+if IS_HEROKU_APP:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -28,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -35,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     
 ]
 
@@ -64,12 +78,28 @@ WSGI_APPLICATION = 'myshop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if IS_HEROKU_APP:
+    # In production on Heroku the database configuration is derived from the `DATABASE_URL`
+    # environment variable by the dj-database-url package. `DATABASE_URL` will be set
+    # automatically by Heroku when a database addon is attached to your Heroku app. See:
+    # https://devcenter.heroku.com/articles/provisioning-heroku-postgres
+    # https://github.com/jazzband/dj-database-url
+    DATABASES = {
+        "default": dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
     }
-}
+else:
+    # When running locally in development or in CI, a sqlite database file will be used instead
+    # to simplify initial setup. Longer term it's recommended to use Postgres locally too.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -102,7 +132,17 @@ TIME_ZONE = 'UTC'
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    # Enable WhiteNoise's GZip and Brotli compression of static assets:
+    # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Don't store the original (un-hashed filename) version of static files, to reduce slug size:
+# https://whitenoise.readthedocs.io/en/latest/django.html#WHITENOISE_KEEP_ONLY_HASHED_FILES
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 
 # Default primary key field type
@@ -127,11 +167,15 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD') 
 
-# Security
-# if not DEBUG:
-#     CSRF_COOKIE_SECURE = True
-#     SESSION_COOKIE_SECURE = True
-#     SECURE_SSL_REDIRECT = True
+if IS_HEROKU_APP:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    
+else:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    SECURE_SSL_REDIRECT = False
 
 INTERNAL_IPS = [
     '127.0.0.1',
