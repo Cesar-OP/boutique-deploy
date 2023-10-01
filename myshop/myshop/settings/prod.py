@@ -1,5 +1,6 @@
 import os
 from .base import *
+import dj_database_url
 
 
 DEBUG = False
@@ -17,10 +18,11 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': '741147123',
         'HOST': 'localhost',  # or the IP where your DB is hosted
-        'PORT': '5443',  # leave as an empty string to use the default port
+        'PORT': '5442',  # leave as an empty string to use the default port
     }
 }
-
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 
