@@ -15,12 +15,11 @@ html5lib==1.1
 idna==3.4
 packaging==23.1
 Pillow==9.2.0
-psycopg2==2.9.8
 psycopg2-binary==2.9.8
 pycparser==2.21
 pydyf==0.8.0
 pyphen==0.14.0
-pyscopg2==66.0.2
+psycopg2==2.9.8
 python-decouple==3.8
 requests==2.31.0
 six==1.16.0

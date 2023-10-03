@@ -6,23 +6,26 @@ import django_heroku
 import dj_database_url
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 print("BASE_DIR:", BASE_DIR)
 
-ALLOWED_HOSTS = []
 SECRET_KEY=(config, 'SECRET_KEY')
 
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if not IS_HEROKU_APP:
-    DEBUG = True
+
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
 
 if IS_HEROKU_APP:
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["boutiquedaana",'www.boutiquedaana.com.br','boutiqueana-23364df9bc33.herokuapp.com']
+    DEBUG = False
+print("IS_HEROKU_APP:", IS_HEROKU_APP)
+print("DEBUG:", DEBUG)
+print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -167,15 +170,15 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD') 
 
-if IS_HEROKU_APP:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+# if IS_HEROKU_APP:
+#     CSRF_COOKIE_SECURE = True
+#     SESSION_COOKIE_SECURE = True
+#     SECURE_SSL_REDIRECT = True
     
-else:
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SECURE = False
-    SECURE_SSL_REDIRECT = False
+# else:
+#     CSRF_COOKIE_SECURE = False
+#     SESSION_COOKIE_SECURE = False
+#     SECURE_SSL_REDIRECT = False
 
 INTERNAL_IPS = [
     '127.0.0.1',
